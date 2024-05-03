@@ -55,11 +55,22 @@ $hotels = [
 ];
 
 
-/* 
-<?= === <?php echo
-*/
+// Intanto mi prendo la lista intera degli hotels
+// se c'è il filtro del park mi segno in un altro 'foglio' solo gli hotels
+// col parcheggio e poi stampo
 
+$parking_filter = isset($_GET['parking']) && $_GET['parking'] === '1' ? true : false;
 
+$filteredHotels = $hotels;
+if($parking_filter) {
+    $hotelsWithParking =[];
+    foreach($filteredHotels as $hotel) {
+        if($hotel['parking']) {
+            $hotelsWithParking[] = $hotel;
+        }
+    }
+    $filteredHotels = $hotelsWithParking;
+}
 
 ?>
 
@@ -97,11 +108,11 @@ $hotels = [
 
         <div class="container">
 
-            <form action="" method="POST">
+            <form action="" method="GET">
 
                 <label for="parking">Parcheggio</label>
-                <input type="checkbox" name="parking" id="parking">
-                <button type="submit">Enter</button>
+                <input class="form-check-input" type="checkbox" <?php echo $parking_filter ? 'checked' : ''; ?> name="parking" id="parking" value="1">
+                <button class="btn btn-primary" type="submit">Enter</button>
 
             </form>
 
@@ -111,6 +122,7 @@ $hotels = [
                     <tr>
                         <th scope="col">Nome</th>
                         <th scope="col">Descrizione</th>
+                        <th scope="col">Parcheggio</th>
                         <th scope="col">Voto</th>
                         <th scope="col">Distanza dal centro</th>
                     </tr>
@@ -121,8 +133,7 @@ $hotels = [
                     if ($_POST) {
                         # code...
                     }
-                    foreach ($hotels as $key => $value) :
-                    ?>
+                    foreach ($filteredHotels as $key => $value) : ?>
                         <tr>
                             <td>
                                 <?= $value['name']; ?>
@@ -132,6 +143,10 @@ $hotels = [
                                 <?= $value['description']; ?>
                             </td>
 
+                            <td>
+                                <?= $value['parking'] ? 'Si' : 'No'; ?>
+                            </td>
+                            
                             <td>
                                 <?= $value['vote']; ?>
                             </td>
