@@ -60,6 +60,7 @@ $hotels = [
 // col parcheggio e poi stampo
 
 $parking_filter = isset($_GET['parking']) && $_GET['parking'] === '1' ? true : false;
+$vote_filter = isset($_GET['vote']) ? intval($_GET['vote']) : 0;
 
 $filteredHotels = $hotels;
 if($parking_filter) {
@@ -70,6 +71,18 @@ if($parking_filter) {
         }
     }
     $filteredHotels = $hotelsWithParking;
+};
+
+// se c'è il filtro del voto ci creiamo un array di appoggio dove salviamo gli hotels con un voto uguale o maggiore al filtro
+if($vote_filter > 0) {
+    $hotelsFilteredByVote = [];
+
+    foreach($filteredHotels as $hotel) {
+        if($hotel['vote'] >= $vote_filter ) {
+            $hotelsFilteredByVote[] = $hotel;
+        }
+    }
+    $filteredHotels = $hotelsFilteredByVote;
 }
 
 ?>
@@ -110,14 +123,30 @@ if($parking_filter) {
 
             <form action="" method="GET">
 
-                <label for="parking">Parcheggio</label>
-                <input class="form-check-input" type="checkbox" <?php echo $parking_filter ? 'checked' : ''; ?> name="parking" id="parking" value="1">
-                <button class="btn btn-primary" type="submit">Enter</button>
+                <div class="d-flex align-items-center gap-3 ">
+                    
+                    <label for="parking">Parcheggio</label>
+                    <input class="form-check-input" type="checkbox" <?php echo $parking_filter ? 'checked' : ''; ?> name="parking" id="parking" value="1">
+                    <button class="btn btn-primary" type="submit">Enter</button>
+                </div>
+
+                <div class="d-flex align-items-center gap-3 py-2">
+                    <label class="form-label" for="vote">Voto:</label>
+                    <select name="vote" id="vote" class="form-select">
+                        <option <?php echo $vote_filter === 0 ? 'selected' : '' ?> value="0">Tutti</option>
+                        <option <?php echo $vote_filter === 1 ? 'selected' : '' ?> value="1">1</option>
+                        <option <?php echo $vote_filter === 2 ? 'selected' : '' ?> value="2">2</option>
+                        <option <?php echo $vote_filter === 3 ? 'selected' : '' ?> value="3">3</option>
+                        <option <?php echo $vote_filter === 4 ? 'selected' : '' ?> value="4">4</option>
+                        <option <?php echo $vote_filter === 5 ? 'selected' : '' ?> value="5">5</option>
+                    </select>
+
+                </div>
 
             </form>
 
 
-            <table class="table table-striped">
+            <table class="table table-striped py-2">
                 <thead>
                     <tr>
                         <th scope="col">Nome</th>
